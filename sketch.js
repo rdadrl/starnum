@@ -1,30 +1,29 @@
-var player = new Player("Arda", "Test Bio", "red");
-var myFont;
+var player,
+    terrain,
+    myFont;
 
 function preload() {
   mainFont = loadFont('./assets/fonts/Minecraftia-Regular.ttf');
+  terrain = new Terrain();
+  player = new Player("Arda", "Test Bio", "red");
 }
 
 function setup() {
-	createCanvas(800, 600);
-	frameRate(10);
+	cnv = createCanvas(896, 504);
+
+	frameRate(30);
 	cursor(CROSS);//noCursor();
   textFont(mainFont);
+  cnv.mouseWheel(changeSize);
+  terrain.grids.generate();
   player.inventory.slots.generate();
 }
 
 function draw() {
-	background(0); //black background
-  //game ver info
-  fill(255);
-  stroke(0);
-  textSize(12);
-  text("Arda's Draft Game Engine, v0.0.1a", 5,24);
-  textAlign(RIGHT);
-  fill("red");
-  text("FPS: " + parseInt(getFrameRate()), 790, 24);
-  textAlign(LEFT);
-  //end game ver info
+  background(30,30,30);
+  terrain.draw();
+  drawDebug();
+
 
   player.inventory.draw();
   player.health.draw();
@@ -37,7 +36,7 @@ function keyPressed() {
     if (key == 0) key = 10;
     player.inventory.slots.update_current_index(key - 1);
   }
-  else if (keyCode == 61 || 173) {
+  else if (keyCode == 61 || keyCode == 173) {
     //keyCode => 61 is = and 173 is - (-)
     if (keyCode == 61) {
             if (player.inventory.slots.selected == player.inventory.slots.num_slot - 1) player.inventory.slots.update_current_index(0);
@@ -46,6 +45,22 @@ function keyPressed() {
       if (player.inventory.slots.selected == 0) player.inventory.slots.update_current_index(player.inventory.slots.num_slot - 1);
       else player.inventory.slots.update_current_index(player.inventory.slots.selected - 1);
     }
+  }
+
+  /*
+    w = 87
+    a = 65 
+    s = 83
+    d = 68
+  */
+  else if (keyCode === LEFT_ARROW || keyCode == 65) {
+    player.x -= 1;
+  } else if (keyCode === RIGHT_ARROW || keyCode == 68) {
+    player.x += 1;
+  } else if (keyCode === UP_ARROW || keyCode == 87) {
+    player.y -= 1;
+  } else if (keyCode === DOWN_ARROW || keyCode == 83) {
+    player.y += 1;
   }
   /*if (keyCode === LEFT_ARROW) {
  		return false;
@@ -75,4 +90,21 @@ function mousePressed() {
     if (mouseButton === RIGHT) {
       	return false;
     }
+}
+
+function changeSize(event) {//scroll to zoom in-out
+  if (event.deltaY > 0) {
+    if (terrain.grids.zoom < 1.5){
+      terrain.grids.zoom += 0.001 * event.deltaY;
+      if (terrain.grids.zoom > 1.5) terrain.grids.zoom = 1.5;
+    }
+  }
+  else {
+    if (terrain.grids.zoom * (terrain.grids.width + terrain.grids.border * 2) * terrain.grids.amount_x > width){
+      terrain.grids.zoom -= 0.001 * - event.deltaY;
+      if (terrain.grids.zoom * (terrain.grids.width + terrain.grids.border * 2) * terrain.grids.amount_x < width){
+        terrain.grids.zoom = 0.75;
+      }
+    }
+  }
 }

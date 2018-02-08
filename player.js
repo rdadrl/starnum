@@ -2,20 +2,24 @@ function Player (name, bio, color) {
     this.name = name;
     this.bio = bio;
     this.color = color;
+    this.x = (terrain.grids.amount_x - (terrain.grids.amount_x % 2)) / 2;
+    this.y = (terrain.grids.amount_y - (terrain.grids.amount_y % 2)) / 2;
     this.gold = {
     	amount: 150,
     	total: 250,
-    	top: 604,
-    	left: 85,
+    	top: 504,
+    	left: 130,
 
     	draw_hud: function() {
+            strokeWeight(1);
+            stroke(0);
     		textSize(12);
     		textAlign(RIGHT);
     		strokeWeight(0);
-    		fill(255, 204, 0, 100);
+    		fill(255, 204, 0);
     		text(this.amount, this.left, this.top);
     		textAlign(LEFT);
-
+            strokeWeight(0);
     		//coin
     		fill(240,150,45);
     		ellipse(this.left + 5, this.top-13, 8);
@@ -35,8 +39,8 @@ function Player (name, bio, color) {
 		width: 10,
 		height: 100,
 		color: "red",
-	    top: 496,
-	    left: 720,
+	    top: 399,
+	    left: 755,
 	    border: 2,
 
     	draw: function() {
@@ -49,24 +53,16 @@ function Player (name, bio, color) {
     		strokeWeight(0);
     		fill(190,15,15,90)
     		rect(this.left + this.border - 1, this.top + this.max - this.current, this.width - this.border, this.current - this.border * 0.5)
-    		//text
-    		strokeWeight(1);
-    		fill(255);
-    		textSize(8);
-       		rotate(-1.6);
-    		text(this.current + "/" + this.max, -615,this.left - this.width + this.border * 2 - 10);
-    		rotate(1.6);
     	}
     }
-
     this.inventory = {
     	slots: {
     		list: [],
     		selected: 0,
     		num_slot: 12,
 	    	width: 47,
-	    	top: 550,
-	    	left: 100,
+	    	top: 450,
+	    	left: 145,
 	    	border: 3,
 
     		generate: function() {
@@ -113,6 +109,8 @@ function Player (name, bio, color) {
     		},
     		display_overview(block){
     			var name = ITEMS[player.inventory.slots.list[block].item].name;
+                strokeWeight(2);
+                stroke(0);
     			textAlign(CENTER);
     			textSize(18);
     			fill(255);
@@ -126,18 +124,20 @@ function Player (name, bio, color) {
 			textSize(8);
 			for (var i = 0; i < this.slots.list.length; i++){
 				if (this.slots.list[i].isSelected) {
-					stroke(255, 204, 0, 80);
-					fill(255, 204, 0, 60);
-					if (i <= 9) text((i + 1) % 10, this.slots.left + i * this.slots.width + i * this.slots.border + 7, this.slots.top + this.slots.width - 1);
+					stroke(255, 204, 0, 140);
+                    fill(255, 204, 0);
+                    if (i <= 9) text((i + 1) % 10, this.slots.left + i * this.slots.width + i * this.slots.border + 7, this.slots.top + this.slots.width - 1);
+					fill(255, 204, 0, 80);
 				}
 				else if (i >= 10) { //if  11 or 12
-					stroke(255, 100, 100, 80);
-					fill(255, 50);//white
+					stroke(255, 100, 100, 140);
+					fill(255, 100);//white
 				}
 				else {
-					stroke(255, 80);
-					fill(255, 50);//white
+					stroke(255, 140);
+					fill(255);//white
 					text((i + 1) % 10, this.slots.left + i * this.slots.width + i * this.slots.border + 7, this.slots.top + this.slots.width - 1);
+                    fill(255, 120);//white
 				}
 				rect(this.slots.left + i * this.slots.width + i * this.slots.border, this.slots.top, this.slots.width, this.slots.width);
 				rect(this.slots.left + i * this.slots.width + i * this.slots.border, this.slots.top, 2, 2); //top left dot
